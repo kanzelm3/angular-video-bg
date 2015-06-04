@@ -37,6 +37,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 overflow: 'hidden'
             });
             scope.ratio = scope.ratio || 16/9;
+            scope.mute = scope.mute === undefined ? true : scope.mute;
 
             var computedStyles = $window.getComputedStyle(element[0]),
                 ytd = $q.defer(),
@@ -206,6 +207,14 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 $player.css(options);
             }
 
+            function playerReady() {
+                if (scope.mute && !player.isMuted()) {
+                    player.mute();
+                } else if (player.isMuted()) {
+                    player.unMute();
+                }
+            }
+
             /**
              * This method initializes the video player and updates the dimensions and positions for the first time.
              */
@@ -224,6 +233,9 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                         rel: 0,
                         showinfo: 0,
                         start: scope.start || 0
+                    },
+                    events: {
+                        onReady: playerReady
                     }
                 });
                 resizeAndPositionPlayer();
