@@ -25,11 +25,12 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             loop: '=?',
             mute: '=?',
             start: '=?',
+            end: '=?',
             contentZIndex: '=?',
             allowClickEvents: '=?'
 		},
         transclude: true,
-		template: '<div><div id="player"></div><div ng-transclude></div></div>',
+		template: '<div><div></div><div ng-transclude></div></div>',
 		link: function(scope, element, attrs, fn) {
 
             element.css({
@@ -37,14 +38,19 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 overflow: 'hidden'
             });
             scope.ratio = scope.ratio || 16/9;
+            scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
 
             var computedStyles = $window.getComputedStyle(element[0]),
-                ytd = $q.defer(),
-                tag = document.createElement('script'),
+                ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
+                $player = element.children().eq(0),
+                playerId,
                 player,
                 parentDimensions,
                 playerDimensions;
+
+            playerId = 'player' + Array.prototype.slice.call(document.querySelectorAll('div[video-id]')).indexOf(element[0]);
+            $player.attr('id', playerId);
 
             /**
              * @ngdoc method
@@ -186,7 +192,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              */
             function resizeAndPositionPlayer() {
                 var $content = element.children().eq(1);
-                var $player = element.children().eq(0);
+                $player = element.children().eq(0);
 
                 $content.css({
                     position: 'relative',
@@ -198,7 +204,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     position: 'absolute',
                     width: playerDimensions.width + 'px',
                     height: playerDimensions.height + 'px',
-                    left: '0',
+                    left: parseInt((parentDimensions.width - playerDimensions.width)/2, 10) + 'px',
                     top: parseInt((parentDimensions.height - playerDimensions.height)/2, 10) + 'px'
                 };
                 if (!scope.allowClickEvents) {
@@ -220,20 +226,26 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              */
             function initVideoPlayer() {
                 updateDimensions();
-                player = new YT.Player('player', {
-                    width: parentDimensions.width,
-                    height: parseInt(parentDimensions.width / scope.ratio, 10),
+                var playerOptions = {
+                    autoplay: 1,
+                    controls: 0,
+                    iv_load_policy: 3,
+                    cc_load_policy: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    loop: scope.loop ? 1 : 0,
+                    start: scope.start || 0
+                };
+                if (scope.end) {
+                    playerOptions.end = scope.end;
+                }
+                player = new YT.Player(playerId, {
+                    width: playerDimensions.width,
+                    height: playerDimensions.height,
                     videoId: scope.videoId,
-                    playerVars: {
-                        autoplay: 1,
-                        controls: 0,
-                        iv_load_policy: 3,
-                        loop: scope.loop ? 1 : 0,
-                        playsinline: 1,
-                        rel: 0,
-                        showinfo: 0,
-                        start: scope.start || 0
-                    },
+                    playerVars: playerOptions,
                     events: {
                         onReady: playerReady
                     }
@@ -254,21 +266,32 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 };
             }
 
-            $window.onYouTubeIframeAPIReady = function() {
-                ytd.resolve();
-            };
+            /**
+             * Check to see if YouTube IFrame script is ready, if it is, resolve ytd defer, if not, wait for
+             * onYouTubeIframeAPIReady to be called by the script to resolve it.
+             */
+            if (!$window.youTubeIframeAPIReady) {
+                var ytd = $q.defer();
+                $window.youTubeIframeAPIReady = ytd.promise;
+                $window.onYouTubeIframeAPIReady = function() {
+                    ytd.resolve();
+                };
+            }
 
             /**
-             * Load the YouTube IFrame Script library asynchronously
+             * If YouTube IFrame Script hasn't been loaded, load the library asynchronously
              */
-            tag.src = "https://www.youtube.com/iframe_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            if (!ytScript) {
+                var tag = document.createElement('script');
+                tag.src = "//www.youtube.com/iframe_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
 
             /**
              * When the YouTube IFrame API script is loaded, we initialize the video player.
              */
-            ytd.promise.then(initVideoPlayer);
+            $window.youTubeIframeAPIReady.then(initVideoPlayer);
 
             /**
              * Anytime the window is resized, update the video player dimensions and position. (this is debounced for
