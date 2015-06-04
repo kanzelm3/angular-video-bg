@@ -4,7 +4,7 @@
   },
   "name": "angular-video-bg",
   "version": "0.1.0",
-  "main": "dist/angular-video-bg.js",
+  "main": "angular-video-bg.min.js",
   "ignore": [
     "**/.*",
     "node_modules",
