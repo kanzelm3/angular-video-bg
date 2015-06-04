@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="angularVideoBg">
+<head>
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+  <link href="app.less" type="text/css" rel="stylesheet/less">
+</head>
+<body>
+
+  <!-- Livereload script for development only (stripped during dist build) -->
+  <script src="http://localhost:35729/livereload.js" data-concat="false"></script>
+
+  <!-- JS from Bower Components -->
+  <script src="bower_components/angular/angular.js"></script>
+  <!-- Add New Bower Component JS Above -->
+
+
+  <!-- Main App JS -->
+  <script src="src/angular-video-bg.js"></script>
+  <!-- Add New Component JS Above -->
+
+  <div>
+      <video-bg video-id="'M7lc1UVf-VE'">
+          <p style="padding: 100px;">Testing transclude!</p>
+      </video-bg>
+  </div>
+
+</body>
+</html>
