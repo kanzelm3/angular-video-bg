@@ -33,30 +33,22 @@ module.exports = function (grunt) {
         options: {
             jshintrc: '.jshintrc'
         },
-        src: ['src/**/*.js']
+        src: ['angular-video-bg.js','angular-video-bg-spec.js']
       }
     },
     clean: {
-      before:{
-        src:['dist']
-      }
-    },
-    concat: {
-      main: {
-        src: ['src/angular-video-bg.js'],
-        dest: 'dist/angular-video-bg.js'
-      }
+        src:['temp']
     },
     ngAnnotate: {
       main: {
-        src:'dist/angular-video-bg.js',
-        dest: 'dist/angular-video-bg.js'
+        src:'angular-video-bg.js',
+        dest: 'temp/angular-video-bg.js'
       }
     },
     uglify: {
       main: {
-        src: 'dist/angular-video-bg.js',
-        dest:'dist/angular-video-bg.min.js'
+        src: 'temp/angular-video-bg.js',
+        dest:'angular-video-bg.min.js'
       }
     },
     karma: {
@@ -65,7 +57,8 @@ module.exports = function (grunt) {
         files: [  //this files data is also updated in the watch handler, if updated change there too
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
-          'src/**/*.js'
+            'angular-video-bg.js',
+            'angular-video-bg-spec.js'
         ],
         logLevel:'ERROR',
         reporters:['mocha'],
@@ -81,7 +74,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build',['jshint','clean:before','concat','ngAnnotate','uglify']);
+  grunt.registerTask('build',['jshint','clean','ngAnnotate','uglify','clean']);
   grunt.registerTask('serve', ['jshint','connect', 'watch']);
   grunt.registerTask('test',['karma:all_tests']);
 
