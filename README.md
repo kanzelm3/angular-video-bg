@@ -10,7 +10,7 @@ You can see a demo of the directive here: [Angular YouTube Video Background](htt
 
 ## Download
 
-* [Version 0.1.3](https://github.com/kanzelm3/angular-video-bg/archive/0.1.3.zip)
+* [Version 0.1.8](https://github.com/kanzelm3/angular-video-bg/archive/0.1.8.zip)
 
 You can also install the package using [Bower](http://bower.io).
 
@@ -22,7 +22,7 @@ Or add it to your bower.json file:
 
 ```javascript
 dependencies: {
-  "angular-video-bg": "~0.1.0"
+  "angular-video-bg": "~0.1.8"
 }
 ```
 
