@@ -24,7 +24,7 @@ module.exports = function (grunt) {
             livereloadOnError: false,
             spawn: false
         },
-        files: ['src/**/*.js'],
+        files: ['./*.js','./*.html'],
         tasks: [] //all the tasks are run dynamically during the watch event handler
       }
     },
@@ -43,6 +43,12 @@ module.exports = function (grunt) {
       main: {
         src:'angular-video-bg.js',
         dest: 'temp/angular-video-bg.js'
+      }
+    },
+    strip : {
+      main : {
+        files : 'temp/angular-video-bg.js',
+        inline : true
       }
     },
     uglify: {
@@ -74,7 +80,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build',['jshint','clean','ngAnnotate','uglify','clean']);
+  grunt.registerTask('build',['jshint','clean','ngAnnotate','strip','uglify','clean']);
   grunt.registerTask('serve', ['jshint','connect', 'watch']);
   grunt.registerTask('test',['karma:all_tests']);
 
