@@ -4,6 +4,10 @@ angular-video-bg is an [Angular.js](http://angularjs.org/) YouTube video backgro
 
 ![angular-video-bg Screenshot](https://raw.github.com/kanzelm3/angular-video-bg/master/screenshot.png)
 
+## Demo
+
+You can see a demo of the directive here: [Angular YouTube Video Background](http://kanzelm3.github.io/angular-video-bg/)
+
 ## Download
 
 * [Version 0.1.3](https://github.com/kanzelm3/angular-video-bg/archive/0.1.3.zip)
