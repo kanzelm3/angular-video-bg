@@ -218,11 +218,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             function resizeAndPositionPlayer() {
                 $player = element.children().eq(0);
 
-                element.css({
-                    width: parentDimensions.width + 'px',
-                    height: parentDimensions.height + 'px'
-                });
-
                 var options = {
                     zIndex: 1,
                     position: 'absolute',
