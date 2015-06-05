@@ -40,7 +40,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
 
-            var computedStyles = $window.getComputedStyle(element.parent()[0]),
+            var computedStyles,
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
                 $player = element.children().eq(0),
                 playerId,
@@ -137,6 +137,36 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 };
             }
 
+            function styleContentElements() {
+                var $content = element.children().eq(1),
+                    hasContent = !!$content.children().length,
+                    parentChildren = Array.prototype.slice.call(element.parent().children());
+                console.log('Parent content children:', $content);
+                if (hasContent) {
+                    element.css({
+                        position: 'relative'
+                    });
+                } else {
+                    element.parent().css({
+                        position: 'relative'
+                    });
+                    element.css({
+                        position: 'absolute',
+                        left: '0',
+                        top: '0'
+                    });
+                    var i = parentChildren.indexOf(element[0]);
+                    if (i > -1) {
+                        parentChildren.splice(i, 1);
+                    }
+                    $content = angular.element(parentChildren);
+                }
+                $content.css({
+                    position: 'relative',
+                    zIndex: scope.contentZIndex || 99
+                });
+            }
+
             /**
              * @ngdoc method
              * @name getParentDimensions
@@ -146,6 +176,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              * @returns {{width: number, height: number}}
              */
             function getParentDimensions() {
+                computedStyles = $window.getComputedStyle(element.parent()[0]);
                 var dimensionProperties = ['width', 'height'],
                     spacerProperties = ['border', 'margin', 'padding'];
                 dimensionProperties = dimensionProperties.reduce(function(obj, property) {
@@ -181,30 +212,9 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              * This method simply executes getParentDimensions and getPlayerDimensions when necessary.
              */
             function updateDimensions() {
+                styleContentElements();
                 parentDimensions = getParentDimensions();
                 playerDimensions = getPlayerDimensions();
-            }
-
-            function getContentElements() {
-                var $content = element.children().eq(1),
-                    hasContent = !!$content.children().length,
-                    parentChildren = Array.prototype.slice.call(element.parent().children());
-                console.log('Parent content children:', $content);
-                if (hasContent) {
-                    element.css({
-                        position: 'relative'
-                    });
-                    return $content;
-                } else {
-                    element.css({
-                        position: 'absolute'
-                    });
-                    var i = parentChildren.indexOf(element[0]);
-                    if (i > -1) {
-                        parentChildren.splice(i, 1);
-                    }
-                    return angular.element(parentChildren);
-                }
             }
 
             /**
@@ -212,19 +222,11 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              * player, it is called when necessary.
              */
             function resizeAndPositionPlayer() {
-                var $content = getContentElements();
                 $player = element.children().eq(0);
-
-                console.log('Parent content children:', $content);
 
                 element.css({
                     width: parentDimensions.width + 'px',
                     height: parentDimensions.height + 'px'
-                });
-
-                $content.css({
-                    position: 'relative',
-                    zIndex: scope.contentZIndex || 99
                 });
 
                 var options = {
