@@ -47,8 +47,8 @@ module.exports = function (grunt) {
     },
     strip : {
       main : {
-        files : 'temp/angular-video-bg.js',
-        inline : true
+        src: 'temp/angular-video-bg.js',
+        dest: 'temp/angular-video-bg.js'
       }
     },
     uglify: {

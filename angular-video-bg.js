@@ -118,7 +118,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                         spacer,
                         sum = 0,
                         sumValues = function(_sum, arg) {
-                            return _sum + spacer[arg];
+                            return spacer[arg] ? _sum + spacer[arg] : _sum;
                         };
                     for (var key in spacers) {
                         if (spacers.hasOwnProperty(key)) {
@@ -181,6 +181,8 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     obj[property] = getPropertyAllSides(property, computedStyles.getPropertyValue);
                     return obj;
                 }, {});
+                console.log('dimensionProperties: ', dimensionProperties);
+                console.log('spacerProperties: ', spacerProperties);
                 return calculateParentDimensions(dimensionProperties, spacerProperties);
             }
 
