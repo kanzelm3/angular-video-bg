@@ -33,9 +33,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
 		template: '<div><div></div><div ng-transclude></div></div>',
 		link: function(scope, element, attrs, fn) {
 
-            element.css({
-                overflow: 'hidden'
-            });
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
@@ -142,14 +139,11 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     hasContent = !!$content.children().length,
                     parentChildren = Array.prototype.slice.call(element.parent().children());
                 console.log('Parent content children:', $content);
-                if (hasContent) {
-                    element.css({
-                        position: 'relative'
-                    });
-                } else {
-                    element.parent().css({
-                        position: 'relative'
-                    });
+                element.parent().css({
+                    position: 'relative',
+                    overflow: 'hidden'
+                });
+                if (!hasContent) {
                     element.css({
                         position: 'absolute',
                         left: '0',
