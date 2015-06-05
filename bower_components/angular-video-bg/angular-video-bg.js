@@ -178,7 +178,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             function getParentDimensions() {
                 computedStyles = $window.getComputedStyle(element.parent()[0]);
                 var dimensionProperties = ['width', 'height'],
-                    spacerProperties = ['border', 'margin', 'padding'];
+                    spacerProperties = ['border', 'margin'];
                 dimensionProperties = dimensionProperties.reduce(function(obj, property) {
                     obj[property] = parseInt(computedStyles.getPropertyValue(property), 10);
                     return obj;
