@@ -20,7 +20,7 @@ describe('video-bg directive', function() {
     }));
 
     it('should create a video player element', function() {
-        expect($player.attr('id')).toBe('player');
+        expect($player.attr('id')).toBe('player-1');
     });
 
     it('should have correct video id', function() {

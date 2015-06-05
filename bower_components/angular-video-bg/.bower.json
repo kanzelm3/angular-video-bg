@@ -3,7 +3,7 @@
     "name": "https://github.com/kanzelm3"
   },
   "name": "angular-video-bg",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "angular-video-bg.min.js",
   "ignore": [
     "**/.*",
@@ -25,13 +25,13 @@
     "angular-mocks": "~1.2"
   },
   "homepage": "https://github.com/kanzelm3/angular-video-bg",
-  "_release": "0.1.3",
+  "_release": "0.1.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.3",
-    "commit": "63532c1151b3e3f837f5819d7f20249244e32d6f"
+    "tag": "v0.1.4",
+    "commit": "ed042738daf25600f0eaedf0d594c400434d1947"
   },
   "_source": "git://github.com/kanzelm3/angular-video-bg.git",
-  "_target": "~0.1.3",
+  "_target": "~0.1",
   "_originalSource": "angular-video-bg"
 }

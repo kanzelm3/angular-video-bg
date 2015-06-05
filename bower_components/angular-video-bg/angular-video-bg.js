@@ -34,14 +34,13 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
 		link: function(scope, element, attrs, fn) {
 
             element.css({
-                position: 'relative',
                 overflow: 'hidden'
             });
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
 
-            var computedStyles = $window.getComputedStyle(element[0]),
+            var computedStyles = $window.getComputedStyle(element.parent()[0]),
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
                 $player = element.children().eq(0),
                 playerId,
@@ -186,13 +185,42 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 playerDimensions = getPlayerDimensions();
             }
 
+            function getContentElements() {
+                var $content = element.children().eq(1),
+                    hasContent = !!$content.children().length,
+                    parentChildren = Array.prototype.slice.call(element.parent().children());
+                console.log('Parent content children:', $content);
+                if (hasContent) {
+                    element.css({
+                        position: 'relative'
+                    });
+                    return $content;
+                } else {
+                    element.css({
+                        position: 'absolute'
+                    });
+                    var i = parentChildren.indexOf(element[0]);
+                    if (i > -1) {
+                        parentChildren.splice(i, 1);
+                    }
+                    return angular.element(parentChildren);
+                }
+            }
+
             /**
              * This method simply resizes and repositions the player based on the dimensions of the parent and video
              * player, it is called when necessary.
              */
             function resizeAndPositionPlayer() {
-                var $content = element.children().eq(1);
+                var $content = getContentElements();
                 $player = element.children().eq(0);
+
+                console.log('Parent content children:', $content);
+
+                element.css({
+                    width: parentDimensions.width + 'px',
+                    height: parentDimensions.height + 'px'
+                });
 
                 $content.css({
                     position: 'relative',
@@ -235,11 +263,14 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     playsinline: 1,
                     rel: 0,
                     showinfo: 0,
-                    loop: scope.loop ? 1 : 0,
-                    start: scope.start || 0
+                    playlist: scope.videoId,
+                    loop: scope.loop ? 1 : 0
                 };
                 if (scope.end) {
                     playerOptions.end = scope.end;
+                }
+                if (scope.start) {
+                    playerOptions.start = scope.start;
                 }
                 player = new YT.Player(playerId, {
                     width: playerDimensions.width,
