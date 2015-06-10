@@ -37,7 +37,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
-            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/0.jpg';
+            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
 
             var computedStyles,
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
