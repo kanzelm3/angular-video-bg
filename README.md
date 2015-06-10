@@ -52,6 +52,7 @@ There are a number of options that be configured inline with attributes. Here ar
 | ratio                | 16/9                | Aspect ratio for the supplied videoId.                                                      |
 | loop                 | true                | If set to false, video will not automatically replay when it reaches the end.               |
 | mute                 | true                | If set to false, the video's sound will play.                                               |
+| mobile-image         | YT video thumb      | Background image to display if user is on phone or tablet (videos cannot autoplay on mobile devices), default is YouTube video thumbnail. |
 | start                | null                | Video start time in seconds. If set, video will play from that point instead of beginning.  |
 | end                  | null                | Video end time in seconds. If set, video will play until that point and stop (or loop).     |
 | content-z-index      | 99                  | If set, will replace the z-index of content within the directive.                           |
@@ -60,12 +61,12 @@ There are a number of options that be configured inline with attributes. Here ar
 **Example:**
 
 ```html
-<video-bg video-id="video.id" ratio="4/3" loop="false" mute="false" start="30" content-z-index="500" allow-click-events="true"></video-bg>
+<video-bg video-id="video.id" ratio="4/3" loop="false" mute="false" mobile-image="'/img/background-img.png'" start="30" end="120" content-z-index="500" allow-click-events="true"></video-bg>
 ```
 
 ## Browser Support
 
-Should work in Chrome, Firefox, Safari, Opera and IE 9+ but have only tested in Chrome, Firefox and Safari so far.
+Tested and working in Chrome, Firefox, Safari, Opera and IE 9+.
 
 ## Contributing
 

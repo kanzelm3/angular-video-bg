@@ -27,7 +27,8 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             start: '=?',
             end: '=?',
             contentZIndex: '=?',
-            allowClickEvents: '=?'
+            allowClickEvents: '=?',
+            mobileImage: '=?'
 		},
         transclude: true,
 		template: '<div><div></div><div ng-transclude></div></div>',
@@ -36,6 +37,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
+            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/0.jpg';
 
             var computedStyles,
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
@@ -326,41 +328,56 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             }
 
             /**
-             * Check to see if YouTube IFrame script is ready, if it is, resolve ytd defer, if not, wait for
-             * onYouTubeIframeAPIReady to be called by the script to resolve it.
+             * if it's mobile or tablet then show background image instead (default is YT video thumbnail
              */
-            if (!$window.youTubeIframeAPIReady) {
-                var ytd = $q.defer();
-                $window.youTubeIframeAPIReady = ytd.promise;
-                $window.onYouTubeIframeAPIReady = function() {
-                    ytd.resolve();
-                };
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+
+                element.parent().css({
+                    backgroundImage: 'url(' + scope.mobileImage + ')',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center'
+                });
+
+            } else {
+
+                /**
+                 * Check to see if YouTube IFrame script is ready, if it is, resolve ytd defer, if not, wait for
+                 * onYouTubeIframeAPIReady to be called by the script to resolve it.
+                 */
+                if (!$window.youTubeIframeAPIReady) {
+                    var ytd = $q.defer();
+                    $window.youTubeIframeAPIReady = ytd.promise;
+                    $window.onYouTubeIframeAPIReady = function() {
+                        ytd.resolve();
+                    };
+                }
+
+                /**
+                 * If YouTube IFrame Script hasn't been loaded, load the library asynchronously
+                 */
+                if (!ytScript) {
+                    var tag = document.createElement('script');
+                    tag.src = "//www.youtube.com/iframe_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                }
+
+                /**
+                 * When the YouTube IFrame API script is loaded, we initialize the video player.
+                 */
+                $window.youTubeIframeAPIReady.then(initVideoPlayer);
+
+                /**
+                 * Anytime the window is resized, update the video player dimensions and position. (this is debounced for
+                 * performance reasons)
+                 */
+                angular.element($window).on('resize', debounce(function() {
+                    updateDimensions();
+                    resizeAndPositionPlayer();
+                    console.log('Window resized!');
+                }, 300));
+
             }
-
-            /**
-             * If YouTube IFrame Script hasn't been loaded, load the library asynchronously
-             */
-            if (!ytScript) {
-                var tag = document.createElement('script');
-                tag.src = "//www.youtube.com/iframe_api";
-                var firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            }
-
-            /**
-             * When the YouTube IFrame API script is loaded, we initialize the video player.
-             */
-            $window.youTubeIframeAPIReady.then(initVideoPlayer);
-
-            /**
-             * Anytime the window is resized, update the video player dimensions and position. (this is debounced for
-             * performance reasons)
-             */
-            angular.element($window).on('resize', debounce(function() {
-                updateDimensions();
-                resizeAndPositionPlayer();
-                console.log('Window resized!');
-            }, 300));
 
 		}
 	};
