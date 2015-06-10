@@ -48,6 +48,51 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             playerId = 'player' + Array.prototype.slice.call(document.querySelectorAll('div[video-id]')).indexOf(element[0]);
             $player.attr('id', playerId);
 
+            // Utility methods
+
+            function debounce(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        timeout = null;
+                        func.apply(context, args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            /**
+             * detect IE
+             * returns version of IE or false, if browser is not Internet Explorer
+             */
+            function detectIE() {
+                var ua = window.navigator.userAgent,
+                    msie = ua.indexOf('MSIE '),
+                    trident = ua.indexOf('Trident/'),
+                    edge = ua.indexOf('Edge/');
+
+                if (msie > 0) {
+                    // IE 10 or older => return version number
+                    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+                }
+
+                if (trident > 0) {
+                    // IE 11 => return version number
+                    var rv = ua.indexOf('rv:');
+                    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+                }
+
+                if (edge > 0) {
+                    // IE 12 => return version number
+                    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+                }
+
+                // other browser
+                return false;
+            }
+
             /**
              * @ngdoc method
              * @name getPropertyAllSides
@@ -130,7 +175,7 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 }
                 return {
                     width: dimensions.width + calculateSpacerValues('left', 'right'),
-                    height: dimensions.height + calculateSpacerValues('top', 'bottom')
+                    height: (detectIE() && detectIE() < 12) ? dimensions.height : dimensions.height + calculateSpacerValues('top', 'bottom')
                 };
             }
 
@@ -173,6 +218,9 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 computedStyles = $window.getComputedStyle(element.parent()[0]);
                 var dimensionProperties = ['width', 'height'],
                     spacerProperties = ['border', 'margin'];
+                if (detectIE() && detectIE() < 12) {
+                    spacerProperties.push('padding');
+                }
                 dimensionProperties = dimensionProperties.reduce(function(obj, property) {
                     obj[property] = parseInt(computedStyles.getPropertyValue(property), 10);
                     return obj;
@@ -275,19 +323,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     }
                 });
                 resizeAndPositionPlayer();
-            }
-
-            function debounce(func, wait) {
-                var timeout;
-                return function() {
-                    var context = this, args = arguments;
-                    var later = function() {
-                        timeout = null;
-                        func.apply(context, args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
             }
 
             /**
