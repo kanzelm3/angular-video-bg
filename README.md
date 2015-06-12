@@ -6,7 +6,7 @@ angular-video-bg is an [Angular.js](http://angularjs.org/) YouTube video backgro
 
 ## Demo
 
-Play with the [Plunker example](http://plnkr.co/edit/PR2oFbCeDoN3PCwAHMdg)
+Play with the [Plunker example](http://plnkr.co/edit/PR2oFbCeDoN3PCwAHMdg?p=preview)
 
 You can also see a demo of the directive here: [Angular YouTube Video Background](http://kanzelm3.github.io/angular-video-bg/)
 
