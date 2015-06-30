@@ -185,7 +185,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 var $content = element.children().eq(1),
                     hasContent = !!$content.children().length,
                     parentChildren = Array.prototype.slice.call(element.parent().children());
-                console.log('Parent content children:', $content);
                 element.parent().css({
                     position: 'relative',
                     overflow: 'hidden'
@@ -231,8 +230,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     obj[property] = getPropertyAllSides(property, computedStyles.getPropertyValue);
                     return obj;
                 }, {});
-                console.log('dimensionProperties: ', dimensionProperties);
-                console.log('spacerProperties: ', spacerProperties);
                 return calculateParentDimensions(dimensionProperties, spacerProperties);
             }
 
@@ -268,8 +265,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              * player, it is called when necessary.
              */
             function resizeAndPositionPlayer() {
-                $player = element.children().eq(0);
-
                 var options = {
                     zIndex: 1,
                     position: 'absolute',
@@ -284,11 +279,52 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 $player.css(options);
             }
 
+            /**
+             * This method simply seeks the video to either the beginning or to the start position (if set).
+             */
+            function seekToStart() {
+                player.seekTo(scope.start || 0);
+            }
+
+            /**
+             * This method handles looping the video better than the native YT embed API player var "loop", especially
+             * when start and end positions are set.
+             */
+            function loopVideo() {
+                var duration, msDuration;
+                if (scope.end) {
+                    duration = scope.end - (scope.start || 0);
+                } else if (scope.start) {
+                    duration = player.getDuration() - scope.start;
+                } else {
+                    duration = player.getDuration();
+                }
+                msDuration = duration * 1000;
+                setTimeout(seekToStart, msDuration);
+            }
+
+            /**
+             * This is the method called when the "player" object is ready and can be interfaced with.
+             */
             function playerReady() {
                 if (scope.mute && !player.isMuted()) {
                     player.mute();
                 } else if (player.isMuted()) {
                     player.unMute();
+                }
+                seekToStart();
+            }
+
+            /**
+             * This is the method called when the "player" object has changed state. It is used here to toggle the video's
+             * display css to block only when the video starts playing, and kick off the video loop (if enabled).
+             */
+            function playerStateChange(evt) {
+                if (evt.data === YT.PlayerState.PLAYING) {
+                    $player.css('display', 'block');
+                    if (scope.loop) {
+                        loopVideo();
+                    }
                 }
             }
 
@@ -306,39 +342,34 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                     playsinline: 1,
                     rel: 0,
                     showinfo: 0,
-                    playlist: scope.videoId,
-                    loop: scope.loop ? 1 : 0
+                    playlist: scope.videoId
                 };
-                if (scope.end) {
-                    playerOptions.end = scope.end;
-                }
-                if (scope.start) {
-                    playerOptions.start = scope.start;
-                }
                 player = new YT.Player(playerId, {
                     width: playerDimensions.width,
                     height: playerDimensions.height,
                     videoId: scope.videoId,
                     playerVars: playerOptions,
                     events: {
-                        onReady: playerReady
+                        onReady: playerReady,
+                        onStateChange: playerStateChange
                     }
                 });
+                $player = element.children().eq(0);
+                $player.css('display', 'none');
                 resizeAndPositionPlayer();
             }
 
+
+            element.parent().css({
+                backgroundImage: 'url(' + scope.mobileImage + ')',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center'
+            });
+
             /**
-             * if it's mobile or tablet then show background image instead (default is YT video thumbnail
+             * if it's not mobile or tablet then initialize video
              */
-            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-
-                element.parent().css({
-                    backgroundImage: 'url(' + scope.mobileImage + ')',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center center'
-                });
-
-            } else {
+            if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 
                 /**
                  * Check to see if YouTube IFrame script is ready, if it is, resolve ytd defer, if not, wait for
