@@ -15,7 +15,7 @@ angular.module('angularVideoBg', []);
  * of the video background.
  * @element <video-bg video-id="videoId" ratio="ratio" loop="loop" mute="mute" start="start" content-z-index="contentZIndex" allow-click-events="allowClickEvents"></video-bg>
  */
-angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
+angular.module('angularVideoBg').directive('videoBg', function($window, $q, $timeout) {
 	return {
 		restrict: 'EA',
 		replace: true,
@@ -28,16 +28,12 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
             end: '=?',
             contentZIndex: '=?',
             allowClickEvents: '=?',
-            mobileImage: '=?'
+            mobileImage: '=?',
+            playerCallback: '&?'
 		},
         transclude: true,
 		template: '<div><div></div><div ng-transclude></div></div>',
 		link: function(scope, element, attrs, fn) {
-
-            scope.ratio = scope.ratio || 16/9;
-            scope.loop = scope.loop === undefined ? true : scope.loop;
-            scope.mute = scope.mute === undefined ? true : scope.mute;
-            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
 
             var computedStyles,
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
@@ -45,10 +41,17 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
                 playerId,
                 player,
                 parentDimensions,
-                playerDimensions;
+                playerDimensions,
+                playerCallback = scope.playerCallback;
 
             playerId = 'player' + Array.prototype.slice.call(document.querySelectorAll('div[video-id]')).indexOf(element[0]);
             $player.attr('id', playerId);
+
+            scope.ratio = scope.ratio || 16/9;
+            scope.loop = scope.loop === undefined ? true : scope.loop;
+            scope.mute = scope.mute === undefined ? true : scope.mute;
+            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
+
 
             // Utility methods
 
@@ -307,6 +310,11 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q) {
              * This is the method called when the "player" object is ready and can be interfaced with.
              */
             function playerReady() {
+                if (playerCallback) {
+                    $timeout(function() {
+                        playerCallback({ player: player });
+                    });
+                }
                 if (scope.mute && !player.isMuted()) {
                     player.mute();
                 } else if (player.isMuted()) {

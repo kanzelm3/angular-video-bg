@@ -110,6 +110,11 @@ video ID.</p>
 <td>false</td>
 <td>If set to true, users will be able to click video to pause/play it.</td>
 </tr>
+<tr>
+<td>player-callback</td>
+<td>null</td>
+<td>If provided, player callback method will be called with the YouTube player object as the first and only argument.</td>
+</tr>
 </tbody>
 </table>
 
@@ -117,6 +122,22 @@ video ID.</p>
 
 <div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">video</span><span class="pl-e">-bg</span> <span class="pl-e">video-id</span>=<span class="pl-s"><span class="pl-pds">"</span>video.id<span class="pl-pds">"</span></span> <span class="pl-e">ratio</span>=<span class="pl-s"><span class="pl-pds">"</span>4/3<span class="pl-pds">"</span></span> <span class="pl-e">loop</span>=<span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span> <span class="pl-e">mute</span>=<span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span> <span class="pl-e">start</span>=<span class="pl-s"><span class="pl-pds">"</span>30<span class="pl-pds">"</span></span> <span class="pl-e">content-z-index</span>=<span class="pl-s"><span class="pl-pds">"</span>500<span class="pl-pds">"</span></span> <span class="pl-e">allow-click-events</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">video</span><span class="pl-e">-bg</span>&gt;</pre></div>
 
+<h2><a id="advanced-usage" class="anchor" href="#advanced-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Usage</h2>
+        <p>If you need more control over the video (for example, if you need to play/pause the video on a button click), provide a
+            method with "player" as the only argument to the player-callback attribute.</p>
+        <div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">video</span><span class="pl-e">-bg</span> <span class="pl-e">video-id</span>=<span class="pl-s"><span class="pl-pds">"</span>video.id<span class="pl-pds">"</span></span> <span class="pl-e">player-callback</span>=<span class="pl-s"><span class="pl-pds">"</span>callback(player)<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">video</span><span class="pl-e">-bg</span>&gt;</pre></div>
+        <div class="highlight highlight-javascript"><pre>angular.module(<span class="pl-s"><span class="pl-pds">'</span>myApp<span class="pl-pds">'</span></span>).controller([<span class="pl-s"><span class="pl-pds">'</span>$scope<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">$scope</span>) {
+    <span class="pl-c1">$scope</span>.<span class="pl-en">callback</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">player</span>) {
+        <span class="pl-c1">$scope</span>.<span class="pl-en">pauseVideo</span> <span class="pl-k">=</span> <span class="pl-k">function</span>() {
+            player.pauseVideo();
+        };
+        <span class="pl-c1">$scope</span>.<span class="pl-en">playVideo</span> <span class="pl-k">=</span> <span class="pl-k">function</span>() {
+            player.playVideo();
+        };
+    };
+});</pre></div>
+        <p>The player object gives you complete access to all of the methods and properties on the player in the
+            <a href="https://developers.google.com/youtube/iframe_api_reference#Playback_controls">YouTube IFrame API</a>.</p>
 <h2>
 <a id="browser-support" class="anchor" href="#browser-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Browser Support</h2>
 

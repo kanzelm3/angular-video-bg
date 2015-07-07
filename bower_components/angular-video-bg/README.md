@@ -47,7 +47,7 @@ video ID.
 
 ## Inline Options
 
-There are a number of options that be configured inline with attributes. Here are a few:
+There are a number of options that be configured inline with attributes:
 
 | Option               | Default             | Description                                                                                 |
 | -------------------- | ------------------- | ------------------------------------------------------------------------------------------- |
@@ -59,12 +59,38 @@ There are a number of options that be configured inline with attributes. Here ar
 | end                  | null                | Video end time in seconds. If set, video will play until that point and stop (or loop).     |
 | content-z-index      | 99                  | If set, will replace the z-index of content within the directive.                           |
 | allow-click-events   | false               | If set to true, users will be able to click video to pause/play it.                         |
+| player-callback      | null                | If provided, player callback method will be called with the YouTube player object as the first and only argument. |
 
 **Example:**
 
 ```html
 <video-bg video-id="video.id" ratio="4/3" loop="false" mute="false" mobile-image="'/img/background-img.png'" start="30" end="120" content-z-index="500" allow-click-events="true"></video-bg>
 ```
+
+## Advanced Usage
+
+If you need more control over the video (for example, if you need to play/pause the video on a button click), provide a
+method with "player" as the only argument to the player-callback attribute.
+
+```html
+<video-bg video-id="video.id" player-callback="callback(player)"></video-bg>
+```
+
+```javascript
+angular.module('myApp').controller(['$scope', function($scope) {
+    $scope.callback = function(player) {
+        $scope.pauseVideo = function() {
+            player.pauseVideo();
+        };
+        $scope.playVideo = function() {
+            player.playVideo();
+        };
+    };
+});
+```
+
+The player object gives you complete access to all of the methods and properties on the player in the
+[YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference#Playback_controls).
 
 ## Browser Support
 
