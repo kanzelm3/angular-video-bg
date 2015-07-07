@@ -3,7 +3,7 @@
     "name": "https://github.com/kanzelm3"
   },
   "name": "angular-video-bg",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "angular-video-bg.min.js",
   "ignore": [
     "**/.*",

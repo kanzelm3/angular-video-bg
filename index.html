@@ -20,9 +20,26 @@
   <script src="angular-video-bg.js"></script>
   <!-- Add New Component JS Above -->
 
-  <div>
-      <video-bg video-id="'zk9Acw-vmUs'"></video-bg>
+  <script type="text/javascript">
+      angular.module('angularVideoBg').controller('VideoCtrl', ['$scope', '$timeout', function($scope) {
+
+          $scope.callback = function(player) {
+              $scope.pauseVideo = function() {
+                  player.pauseVideo();
+              };
+              $scope.playVideo = function() {
+                  player.playVideo();
+              };
+          };
+
+      }]);
+  </script>
+
+  <div ng-controller="VideoCtrl">
+      <video-bg video-id="'nfWlot6h_JM'" player-callback="callback(player)"></video-bg>
       <p style="padding: 200px 0;">Testing transclude!</p>
+      <button type="button" ng-click="pauseVideo()" ng-show="pauseVideo">Pause Video</button>
+      <button type="button" ng-click="playVideo()" ng-show="playVideo">Play Video</button>
   </div>
   <div>
       <video-bg video-id="'cqcldOyEYRE'">
