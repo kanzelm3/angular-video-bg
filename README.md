@@ -69,6 +69,11 @@ There are a number of options that be configured inline with attributes:
 
 ## Advanced Usage
 
+The documentation above is sufficient for most use-cases; however, there are other options below for those that need more
+advanced integration.
+
+### Playlist Capability
+
 If instead of playing a single video, you need to play several videos in a playlist, you should use the playlist attribute
 instead of the videoId attribute. The playlist attribute accepts an array of video objects. Each video object must have a
 'videoId' property at minimum. Other valid properties that it can have are 'start', 'end', 'mute', and 'mobileImage'. These
