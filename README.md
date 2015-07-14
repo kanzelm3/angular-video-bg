@@ -24,7 +24,7 @@ Or add it to your bower.json file:
 
 ```javascript
 dependencies: {
-  "angular-video-bg": "~0.2"
+  "angular-video-bg": "~0.3"
 }
 ```
 
