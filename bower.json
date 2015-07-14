@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-video-bg": "~0.2",
+    "angular-video-bg": "~0.3",
     "angular": "~1.2"
   }
 }
