@@ -20,7 +20,8 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
 		restrict: 'EA',
 		replace: true,
 		scope: {
-            videoId: '=',
+            videoId: '=?',
+            playlist: '=?',
             ratio: '=?',
             loop: '=?',
             mute: '=?',
@@ -43,7 +44,9 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
                 parentDimensions,
                 playerDimensions,
                 playerCallback = scope.playerCallback,
-                backgroundImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
+                backgroundImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg',
+                videoArr,
+                videoTimeout;
 
             playerId = 'player' + Array.prototype.slice.call(document.querySelectorAll('div[video-id]')).indexOf(element[0]);
             $player.attr('id', playerId);
@@ -51,6 +54,18 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
+
+            if (!scope.videoId && !scope.playlist) {
+                throw new Error('Either video-id or playlist must be defined.');
+            }
+            if (scope.videoId && scope.playlist) {
+                throw new Error('Both video-id and playlist cannot be defined, please choose one or the other.');
+            }
+            if (scope.playlist) {
+                videoArr = scope.playlist.map(function(videoObj) {
+                    return videoObj.videoId;
+                });
+            }
 
 
             // Utility methods
@@ -285,25 +300,43 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
             /**
              * This method simply seeks the video to either the beginning or to the start position (if set).
              */
-            function seekToStart() {
-                player.seekTo(scope.start || 0);
+            function seekToStart(video) {
+                video = video || scope;
+                player.seekTo(video.start || 0);
             }
 
             /**
              * This method handles looping the video better than the native YT embed API player var "loop", especially
              * when start and end positions are set.
              */
-            function loopVideo() {
+            function loopVideo(video) {
                 var duration, msDuration;
-                if (scope.end) {
-                    duration = scope.end - (scope.start || 0);
+                video = video || scope;
+                if (video.end) {
+                    duration = video.end - (video.start || 0);
                 } else if (scope.start) {
-                    duration = player.getDuration() - scope.start;
+                    duration = player.getDuration() - video.start;
                 } else {
                     duration = player.getDuration();
                 }
                 msDuration = duration * 1000;
-                setTimeout(seekToStart, msDuration);
+                console.log('duration', msDuration);
+                videoTimeout = setTimeout(function() {
+                    if (scope.playlist) {
+                        player.nextVideo();
+                    } else {
+                        seekToStart(video);
+                    }
+                }, msDuration);
+            }
+
+            /**
+             * This method handles looping the video better than the native YT embed API player var "loop", especially
+             * when start and end positions are set.
+             */
+            function playlistVideoChange() {
+                var videoObj = scope.playlist[player.getPlaylistIndex()];
+                loopVideo(videoObj);
             }
 
             /**
@@ -314,6 +347,12 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
                     $timeout(function() {
                         playerCallback({ player: player });
                     });
+                }
+                if (scope.playlist) {
+                    player.loadPlaylist(videoArr);
+                    if (scope.loop) {
+                        player.setLoop(true);
+                    }
                 }
                 if (scope.mute && !player.isMuted()) {
                     player.mute();
@@ -330,8 +369,30 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
             function playerStateChange(evt) {
                 if (evt.data === YT.PlayerState.PLAYING) {
                     $player.css('display', 'block');
-                    if (scope.loop) {
+                    if (!scope.playlist && scope.loop) {
                         loopVideo();
+                    }
+                    if (scope.playlist && scope.loop) {
+                        playlistVideoChange();
+                    }
+                }
+                if (evt.data === YT.PlayerState.UNSTARTED && scope.playlist) {
+                    var videoObj = scope.playlist[player.getPlaylistIndex()],
+                        videoMute = videoObj.mute === undefined ? scope.mute : videoObj.mute;
+                    backgroundImage = videoObj.mobileImage || scope.mobileImage || '//img.youtube.com/vi/' + videoObj.videoId + '/maxresdefault.jpg';
+                    setBackgroundImage(backgroundImage);
+                    $player.css('display', 'none');
+                    seekToStart(videoObj);
+                    if (videoMute || (videoMute && scope.mute)) {
+                        console.log('mute');
+                        if (!player.isMuted()) {
+                            player.mute();
+                        }
+                    } else if (!videoMute || !scope.mute) {
+                        console.log('unmute');
+                        if (player.isMuted()) {
+                            player.unMute();
+                        }
                     }
                 }
             }
@@ -423,10 +484,24 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
 
             scope.$watch('videoId', function(current, old) {
                 if (current && old && current !== old) {
+                    clearTimeout(videoTimeout);
                     backgroundImage = scope.mobileImage || '//img.youtube.com/vi/' + current + '/maxresdefault.jpg';
                     setBackgroundImage(backgroundImage);
                     $player.css('display', 'none');
                     player.loadVideoById(current);
+                }
+            });
+
+            scope.$watchCollection('playlist', function(current, old) {
+                if (current && old && current !== old) {
+                    clearTimeout(videoTimeout);
+                    videoArr = current.map(function(videoObj) {
+                        return videoObj.videoId;
+                    });
+                    player.loadPlaylist(videoArr);
+                    if (scope.loop) {
+                        player.setLoop(true);
+                    }
                 }
             });
 

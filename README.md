@@ -38,8 +38,8 @@ To use the library, include the JS file on your index page, then include the mod
 app = angular.module('myApp', ['angularVideoBg'])
 ```
 
-The directive itself is simply called *video-bg*. The only required attribute is videoId, which should be a YouTube
-video ID.
+The directive itself is simply called *video-bg*. The only required attribute is either videoId (which should be a YouTube
+video ID) or playlist (which should be an array of video objects, see example in advanced usage section below).
 
 ```html
 <video-bg video-id="video.id"></video-bg>
@@ -68,6 +68,37 @@ There are a number of options that be configured inline with attributes:
 ```
 
 ## Advanced Usage
+
+If instead of playing a single video, you need to play several videos in a playlist, you should use the playlist attribute
+instead of the videoId attribute. The playlist attribute accepts an array of video objects. Each video object must have a
+'videoId' property at minimum. Other valid properties that it can have are 'start', 'end', 'mute', and 'mobileImage'. These
+all do the same thing as the corresponding options on the directive, however, instead of applying to every video they only
+apply to the current video. Example below of using the playlist attribute:
+
+```js
+angular.module('myApp').controller('VideoCtrl', function($scope) {
+
+    // Array of videos to use as playlist
+    $scope.videos = [{
+        videoId: 'some_video',
+        mute: false
+    },{
+        videoId: 'some_other_video',
+        start: 10,
+        end: 50
+    }];
+
+});
+```
+
+```html
+<video-bg playlist="videos"></video-bg>
+```
+
+If you dynamically change this videos array (e.g. add a new video to the list), the new playlist will be loaded and
+played accordingly.
+
+### YouTube Player API
 
 If you need more control over the video (for example, if you need to play/pause the video on a button click), provide a
 method with "player" as the only argument to the player-callback attribute.
