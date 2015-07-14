@@ -42,7 +42,8 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
                 player,
                 parentDimensions,
                 playerDimensions,
-                playerCallback = scope.playerCallback;
+                playerCallback = scope.playerCallback,
+                backgroundImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
 
             playerId = 'player' + Array.prototype.slice.call(document.querySelectorAll('div[video-id]')).indexOf(element[0]);
             $player.attr('id', playerId);
@@ -50,7 +51,6 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
             scope.ratio = scope.ratio || 16/9;
             scope.loop = scope.loop === undefined ? true : scope.loop;
             scope.mute = scope.mute === undefined ? true : scope.mute;
-            scope.mobileImage = scope.mobileImage || '//img.youtube.com/vi/' + scope.videoId + '/maxresdefault.jpg';
 
 
             // Utility methods
@@ -367,12 +367,15 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
                 resizeAndPositionPlayer();
             }
 
+            function setBackgroundImage(img) {
+                element.parent().css({
+                    backgroundImage: 'url(' + img + ')',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center'
+                });
+            }
 
-            element.parent().css({
-                backgroundImage: 'url(' + scope.mobileImage + ')',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center'
-            });
+            setBackgroundImage(backgroundImage);
 
             /**
              * if it's not mobile or tablet then initialize video
@@ -417,6 +420,15 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
                 }, 300));
 
             }
+
+            scope.$watch('videoId', function(current, old) {
+                if (current && old && current !== old) {
+                    backgroundImage = scope.mobileImage || '//img.youtube.com/vi/' + current + '/maxresdefault.jpg';
+                    setBackgroundImage(backgroundImage);
+                    $player.css('display', 'none');
+                    player.loadVideoById(current);
+                }
+            });
 
 		}
 	};

@@ -23,6 +23,8 @@
   <script type="text/javascript">
       angular.module('angularVideoBg').controller('VideoCtrl', ['$scope', '$timeout', function($scope) {
 
+          $scope.videoId = 'nfWlot6h_JM';
+
           $scope.callback = function(player) {
               $scope.pauseVideo = function() {
                   player.pauseVideo();
@@ -32,12 +34,17 @@
               };
           };
 
+          $scope.changeVideo = function() {
+              $scope.videoId = 'Xa0Q0J5tOP0';
+          };
+
       }]);
   </script>
 
   <div ng-controller="VideoCtrl">
-      <video-bg video-id="'nfWlot6h_JM'" player-callback="callback(player)"></video-bg>
+      <video-bg video-id="videoId" player-callback="callback(player)"></video-bg>
       <p style="padding: 200px 0;">Testing transclude!</p>
+      <button type="button" ng-click="changeVideo()">Change Video</button>
       <button type="button" ng-click="pauseVideo()" ng-show="pauseVideo">Pause Video</button>
       <button type="button" ng-click="playVideo()" ng-show="playVideo">Play Video</button>
   </div>
