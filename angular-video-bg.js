@@ -291,8 +291,8 @@ function videoBg($window, $q, $timeout) {
                 var options = {
                     zIndex: 1,
                     position: 'absolute',
-                    width: playerDimensions.width + 'px',
-                    height: playerDimensions.height + 'px',
+                    width: playerDimensions.width.toString() + 'px',
+                    height: playerDimensions.height.toString() + 'px',
                     left: ((parentDimensions.width - playerDimensions.width)/2).toString() + 'px',
                     top: ((parentDimensions.height - playerDimensions.height)/2).toString() + 'px'
                 };
