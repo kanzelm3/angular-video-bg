@@ -148,6 +148,4 @@ If you create new unit test, you can run `grunt test` to execute all of the unit
 
 ## Potential Features down the road
 
-* Add support for HTML5 videos instead of just YouTube videos.
-* Dynamically change video being played.
-* Add support for YouTube playlists.
+* Add support for HTML5, Vimeo videos instead of just YouTube videos.
