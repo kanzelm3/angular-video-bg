@@ -39,15 +39,9 @@ module.exports = function (grunt) {
     clean: {
         src:['temp']
     },
-    ngAnnotate: {
-      main: {
-        src:'angular-video-bg.js',
-        dest: 'temp/angular-video-bg.js'
-      }
-    },
     strip : {
       main : {
-        src: 'temp/angular-video-bg.js',
+        src: 'angular-video-bg.js',
         dest: 'temp/angular-video-bg.js'
       }
     },
@@ -80,7 +74,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build',['jshint','clean','ngAnnotate','strip','uglify','clean']);
+  grunt.registerTask('build',['jshint','clean','strip','uglify','clean']);
   grunt.registerTask('serve', ['jshint','connect', 'watch']);
   grunt.registerTask('test',['karma:all_tests']);
 
