@@ -15,7 +15,12 @@ angular.module('angularVideoBg', []);
  * of the video background.
  * @element <video-bg video-id="videoId" ratio="ratio" loop="loop" mute="mute" start="start" content-z-index="contentZIndex" allow-click-events="allowClickEvents"></video-bg>
  */
-angular.module('angularVideoBg').directive('videoBg', function($window, $q, $timeout) {
+angular.module('angularVideoBg').directive('videoBg', videoBg);
+
+// this obviates using ngAnnotate in the build task
+videoBg.$inject = ['$window', '$q', '$timeout'];
+
+function videoBg($window, $q, $timeout) {
 	return {
 		restrict: 'EA',
 		replace: true,
@@ -507,4 +512,4 @@ angular.module('angularVideoBg').directive('videoBg', function($window, $q, $tim
 
 		}
 	};
-});
+}
