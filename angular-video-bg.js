@@ -265,8 +265,8 @@ function videoBg($window, $q, $timeout) {
              * @returns {{width: number, height: number}}
              */
             function getPlayerDimensions() {
-                var aspectHeight = parseInt(parentDimensions.width / scope.ratio, 10),
-                    aspectWidth = parseInt(parentDimensions.height * scope.ratio, 10),
+                var aspectHeight = (parentDimensions.width / scope.ratio),
+                    aspectWidth = (parentDimensions.height * scope.ratio),
                     useAspectHeight = parentDimensions.height < aspectHeight;
                 return {
                     width: useAspectHeight ? parentDimensions.width : aspectWidth,
@@ -291,10 +291,10 @@ function videoBg($window, $q, $timeout) {
                 var options = {
                     zIndex: 1,
                     position: 'absolute',
-                    width: playerDimensions.width + 'px',
-                    height: playerDimensions.height + 'px',
-                    left: parseInt((parentDimensions.width - playerDimensions.width)/2, 10) + 'px',
-                    top: parseInt((parentDimensions.height - playerDimensions.height)/2, 10) + 'px'
+                    width: playerDimensions.width.toString() + 'px',
+                    height: playerDimensions.height.toString() + 'px',
+                    left: ((parentDimensions.width - playerDimensions.width)/2).toString() + 'px',
+                    top: ((parentDimensions.height - playerDimensions.height)/2).toString() + 'px'
                 };
                 if (!scope.allowClickEvents) {
                     options.pointerEvents = 'none';
