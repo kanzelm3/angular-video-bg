@@ -49,15 +49,20 @@
               });
           };
 
+          $scope.destroyVideo = function() {
+              $scope.videoDestroyed = !$scope.videoDestroyed;
+          };
+
       }]);
   </script>
 
   <div ng-controller="VideoCtrl">
-      <video-bg playlist="videos" player-callback="callback(player)"></video-bg>
+      <video-bg ng-if="!videoDestroyed" playlist="videos" player-callback="callback(player)"></video-bg>
       <p style="padding: 200px 0;">Testing transclude!</p>
       <button type="button" ng-click="changeVideo()">Change Video</button>
       <button type="button" ng-click="pauseVideo()" ng-show="pauseVideo">Pause Video</button>
       <button type="button" ng-click="playVideo()" ng-show="playVideo">Play Video</button>
+      <button type="button" ng-click="destroyVideo()" ng-show="destroyVideo">Destroy Video</button>
   </div>
   <div>
       <video-bg video-id="'cqcldOyEYRE'">

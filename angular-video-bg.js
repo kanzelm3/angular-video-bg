@@ -39,7 +39,7 @@ function videoBg($window, $q, $timeout) {
 		},
         transclude: true,
 		template: '<div><div></div><div ng-transclude></div></div>',
-		link: function(scope, element, attrs, fn) {
+		link: function(scope, element) {
 
             var computedStyles,
                 ytScript = document.querySelector('script[src="//www.youtube.com/iframe_api"]'),
@@ -365,6 +365,13 @@ function videoBg($window, $q, $timeout) {
                     player.unMute();
                 }
                 seekToStart();
+                scope.$on('$destroy', function() {
+                    if (videoTimeout) {
+                        clearTimeout(videoTimeout);
+                    }
+                    angular.element($window).off('resize', windowResized);
+                    player.destroy();
+                });
             }
 
             /**
@@ -441,6 +448,11 @@ function videoBg($window, $q, $timeout) {
                 });
             }
 
+            var windowResized = debounce(function() {
+                updateDimensions();
+                resizeAndPositionPlayer();
+            }, 300);
+
             setBackgroundImage(backgroundImage);
 
             /**
@@ -479,11 +491,7 @@ function videoBg($window, $q, $timeout) {
                  * Anytime the window is resized, update the video player dimensions and position. (this is debounced for
                  * performance reasons)
                  */
-                angular.element($window).on('resize', debounce(function() {
-                    updateDimensions();
-                    resizeAndPositionPlayer();
-                    console.log('Window resized!');
-                }, 300));
+                angular.element($window).on('resize', windowResized);
 
             }
 
