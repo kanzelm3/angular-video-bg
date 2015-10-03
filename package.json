@@ -1,6 +1,6 @@
 {
   "name": "angularVideoBg",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "devDependencies": {
     "grunt": "~0.4",
     "grunt-contrib-clean": "~0.5",
