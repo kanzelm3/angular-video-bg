@@ -488,7 +488,7 @@
                     /**
                      * When the YouTube IFrame API script is loaded, we initialize the video player.
                      */
-                    $window.youTubeIframeAPIReady.then(initVideoPlayer);
+                    $window.youTubeIframeAPIReady.then(initVideoPlayer());
 
                     /**
                      * Anytime the window is resized, update the video player dimensions and position. (this is debounced for
