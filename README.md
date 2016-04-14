@@ -1,5 +1,7 @@
 # angular-video-bg
 
+_NOTE: This project is no longer being maintained. I have been working primarily in React lately, and no longer have time to keep up with all of the Angular updates._
+
 angular-video-bg is an [Angular.js](http://angularjs.org/) YouTube video background player directive. It stresses simplicity and performance.
 
 ![angular-video-bg Screenshot](https://raw.github.com/kanzelm3/angular-video-bg/master/screenshot.png)
