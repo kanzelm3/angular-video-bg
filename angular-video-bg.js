@@ -357,7 +357,7 @@
                             playerCallback({ 
                                 player: player, 
                                 methods : {
-                                    resize : resizeAndPositionPlayer
+                                    resize : resize
                                 } 
                             });
                         });
@@ -460,6 +460,10 @@
                     });
                 }
 
+                function resize() {
+                    angular.element($window).trigger('resize');
+                }
+
                 var windowResized = debounce(function() {
                     updateDimensions();
                     resizeAndPositionPlayer();
@@ -517,9 +521,6 @@
                     }
                 });
 
-                scope.$on('video-bg:resize', function() {
-
-                });
 
                 scope.$watchCollection('playlist', function(current, old) {
                     if (current && old && current !== old) {
