@@ -38,6 +38,7 @@
                 contentZIndex: '=?',
                 allowClickEvents: '=?',
                 mobileImage: '=?',
+                playerVars : '=?',
                 playerCallback: '&?'
             },
             transclude: true,
@@ -353,7 +354,12 @@
                 function playerReady() {
                     if (playerCallback) {
                         $timeout(function() {
-                            playerCallback({ player: player });
+                            playerCallback({ 
+                                player: player, 
+                                methods : {
+                                    resize : resize
+                                } 
+                            });
                         });
                     }
                     if (scope.playlist) {
@@ -428,6 +434,9 @@
                         showinfo: 0,
                         playlist: scope.videoId
                     };
+                    if (angular.isObject(scope.playerVars)) {
+                        playerOptions = angular.extend({}, playerOptions, scope.playerVars);
+                    }
                     player = new YT.Player(playerId, {
                         width: playerDimensions.width,
                         height: playerDimensions.height,
@@ -449,6 +458,10 @@
                         backgroundSize: 'cover',
                         backgroundPosition: 'center center'
                     });
+                }
+
+                function resize() {
+                    angular.element($window).trigger('resize');
                 }
 
                 var windowResized = debounce(function() {
@@ -507,6 +520,7 @@
                         player.loadVideoById(current);
                     }
                 });
+
 
                 scope.$watchCollection('playlist', function(current, old) {
                     if (current && old && current !== old) {
