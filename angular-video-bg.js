@@ -462,13 +462,13 @@
                  * if it's not mobile or tablet then initialize video
                  */
                 if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-
+                    var ytd;
                     /**
                      * Check to see if YouTube IFrame script is ready, if it is, resolve ytd defer, if not, wait for
                      * onYouTubeIframeAPIReady to be called by the script to resolve it.
                      */
                     if (!$window.youTubeIframeAPIReady) {
-                        var ytd = $q.defer();
+                        ytd = $q.defer();
                         $window.youTubeIframeAPIReady = ytd.promise;
                         $window.onYouTubeIframeAPIReady = function() {
                             ytd.resolve();
@@ -483,6 +483,8 @@
                         tag.src = "//www.youtube.com/iframe_api";
                         var firstScriptTag = document.getElementsByTagName('script')[0];
                         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                    } else if (ytd) {
+                        ytd.resolve();
                     }
 
                     /**
