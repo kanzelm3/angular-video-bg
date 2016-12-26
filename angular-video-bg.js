@@ -63,7 +63,7 @@
                 scope.loop = scope.loop === undefined ? true : scope.loop;
                 scope.mute = scope.mute === undefined ? true : scope.mute;
 
-                if (!scope.videoId && !scope.playlist) {
+                if (!scope.videoId || !scope.playlist) {
                     throw new Error('Either video-id or playlist must be defined.');
                 }
                 if (scope.videoId && scope.playlist) {
